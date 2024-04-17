@@ -571,6 +571,10 @@ video {
   padding: 5rem;
 }
 
+.p-10 {
+  padding: 2.5rem;
+}
+
 .text-white {
   --tw-text-opacity: 1;
   color: rgb(255 255 255 / var(--tw-text-opacity));

@@ -1,0 +1,8 @@
+.bgImage {
+  background-image: url("../../assets/weather.png");
+  /* object-fit: cover; */
+  /* background-position: fixed; */
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: fit-content;
+}
