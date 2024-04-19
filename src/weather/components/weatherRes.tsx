@@ -17,7 +17,7 @@ export default function WeatherResponse() {
       const { lon, lat } = filterData[0].coordinates;
       dispatch(WeatherApiData({ lon, lat }));
     }
-  });
+  }, []);
 
   return (
     <div>

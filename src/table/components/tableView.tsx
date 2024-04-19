@@ -7,7 +7,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { City, CityResponse } from "../../model/model";
 import FilterData from "./filterData";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { genameMapData } from "../tableSlice";
@@ -36,23 +36,35 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
 
 export default function TableView({ data }: { data: CityResponse }) {
   const dispatch = useDispatch<any>();
+  const addTemp = useSelector((state: any) => state.data?.entities[0]);
+
+  const [search, setSearch] = useState<any>("");
   const [filteredData, setFilteredData] = useState<City[]>(
     data.results ? data.results : []
   );
+  useEffect(() => {
+    setFilteredData(data.results ? data.results : []);
+    let filterRes = data.results?.filter((item) => item.name);
+    if (filterRes) {
+      setFilteredData(filterRes);
+      dispatch(genameMapData(filterRes));
+    }
+  }, [data]);
+
   // const onQueryChanges=useSelector((state)=>state.data)
 
-  const onQueryChange = (s: any) => {
+  const onQueryChange = (s: String) => {
     const filterRes = data.results?.filter((item) =>
       item.name.toLowerCase().includes(s.toLowerCase())
     );
     if (filterRes) {
       setFilteredData(filterRes);
-      dispatch(genameMapData(filterRes));
-    }
-    if (s in filteredData) {
-      console.log("sjndkj", s);
+      if (filterRes.length == 0) {
+        console.log("No results found");
+      }
     }
   };
+  // console.log(filteredData);
   return (
     <>
       <div className=" md:space-x-4 md:pt-10 pt-3  px-10">
@@ -76,6 +88,8 @@ export default function TableView({ data }: { data: CityResponse }) {
                   <StyledTableCell>Timezone</StyledTableCell>
                   <StyledTableCell>Countrycode</StyledTableCell>
                   <StyledTableCell>Coordinates</StyledTableCell>
+                  <StyledTableCell>MaxTemperature</StyledTableCell>
+                  <StyledTableCell>MinTemperature</StyledTableCell>
                 </TableRow>
                 <TableBody className="w-full bg-neutral-100">
                   {filteredData.map((element, index) => {
@@ -113,6 +127,16 @@ export default function TableView({ data }: { data: CityResponse }) {
                           </StyledTableCell>
                           <StyledTableCell>
                             {element.coordinates.lat},{element.coordinates.lon}
+                          </StyledTableCell>
+                          <StyledTableCell>
+                            {element.ascii_name === addTemp?.name
+                              ? addTemp.main.temp_max
+                              : null}
+                          </StyledTableCell>
+                          <StyledTableCell>
+                            {element.ascii_name === addTemp?.name
+                              ? addTemp.main.temp_min
+                              : null}
                           </StyledTableCell>
                         </StyledTableRow>
                       </>
