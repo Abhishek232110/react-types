@@ -1,17 +1,16 @@
-import { styled } from "@mui/material/styles";
+import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell, { tableCellClasses } from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import { City, CityResponse } from "../../model/model";
-import FilterData from "./filterData";
+import { styled } from "@mui/material/styles";
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { genameMapData } from "../tableSlice";
-import { info } from "console";
+import { RootState } from "../../app/reducers";
+import { City } from "../../model/model";
+import FilterData from "./filterData";
 // import FilterData from "./filterData";
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -34,29 +33,32 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
-export default function TableView({ data }: { data: CityResponse }) {
-  const dispatch = useDispatch<any>();
-  const addTemp = useSelector((state: any) => state.data?.entities[0]);
+export default function TableView() {
+  const weatherTemperature = useSelector((state: any) => state.data?.weather);
 
-  const [search, setSearch] = useState<any>("");
+  const cityResponse = useSelector((state: RootState) => state.data?.city);
+
   const [filteredData, setFilteredData] = useState<City[]>(
-    data.results ? data.results : []
+    cityResponse.results ? cityResponse.results : []
   );
+  // console.log("sndfkssdfsd", filteredData);
+
   useEffect(() => {
-    setFilteredData(data.results ? data.results : []);
-    let filterRes = data.results?.filter((item) => item.name);
+    setFilteredData(cityResponse.results ? cityResponse.results : []);
+    let filterRes = cityResponse.results?.filter((item) => item.name);
     if (filterRes) {
       setFilteredData(filterRes);
-      dispatch(genameMapData(filterRes));
     }
-  }, [data]);
+  }, [cityResponse]);
 
   // const onQueryChanges=useSelector((state)=>state.data)
 
   const onQueryChange = (s: String) => {
-    const filterRes = data.results?.filter((item) =>
+    console.log(s);
+    const filterRes = cityResponse.results?.filter((item) =>
       item.name.toLowerCase().includes(s.toLowerCase())
     );
+    console.log("filterRes", filterRes);
     if (filterRes) {
       setFilteredData(filterRes);
       if (filterRes.length == 0) {
@@ -64,7 +66,7 @@ export default function TableView({ data }: { data: CityResponse }) {
       }
     }
   };
-  // console.log(filteredData);
+
   return (
     <>
       <div className=" md:space-x-4 md:pt-10 pt-3  px-10">
@@ -88,8 +90,12 @@ export default function TableView({ data }: { data: CityResponse }) {
                   <StyledTableCell>Timezone</StyledTableCell>
                   <StyledTableCell>Countrycode</StyledTableCell>
                   <StyledTableCell>Coordinates</StyledTableCell>
-                  <StyledTableCell>MaxTemperature</StyledTableCell>
-                  <StyledTableCell>MinTemperature</StyledTableCell>
+                  <StyledTableCell>
+                    MaxTemperature&nbsp;in&nbsp;F
+                  </StyledTableCell>
+                  <StyledTableCell>
+                    MinTemperature&nbsp;in&nbsp;F
+                  </StyledTableCell>
                 </TableRow>
                 <TableBody className="w-full bg-neutral-100">
                   {filteredData.map((element, index) => {
@@ -129,13 +135,13 @@ export default function TableView({ data }: { data: CityResponse }) {
                             {element.coordinates.lat},{element.coordinates.lon}
                           </StyledTableCell>
                           <StyledTableCell>
-                            {element.ascii_name === addTemp?.name
-                              ? addTemp.main.temp_max
+                            {element.ascii_name === weatherTemperature?.name
+                              ? weatherTemperature.main.temp_max
                               : null}
                           </StyledTableCell>
                           <StyledTableCell>
-                            {element.ascii_name === addTemp?.name
-                              ? addTemp.main.temp_min
+                            {element.ascii_name === weatherTemperature?.name
+                              ? weatherTemperature.main.temp_min
                               : null}
                           </StyledTableCell>
                         </StyledTableRow>

@@ -5,10 +5,10 @@ import { GeonameApiData } from "./table/tableSlice";
 import { useEffect } from "react";
 
 function App() {
-  const dispatch = useDispatch<any>();
-  useEffect(() => {
-    dispatch(GeonameApiData());
-  }, []);
+  // const dispatch = useDispatch<any>();
+  // useEffect(() => {
+  //   dispatch(GeonameApiData());
+  // }, []);
   return (
     <div className="">
       <AppRoutes />

@@ -4,13 +4,13 @@ import {
   createAsyncThunk,
   createSlice,
 } from "@reduxjs/toolkit";
-import { GeonameApi } from "../app/api";
+import { geonameApi } from "../app/api";
 import axios from "axios";
-import { CityResponse, Coordinates } from "../model/model";
+import { CityResponse, Coordinates, WeatherData } from "../model/model";
 
 // First, create the thunk
 export const GeonameApiData = createAsyncThunk("geonameApi", async () => {
-  const response = await axios.get(GeonameApi);
+  const response = await axios.get(geonameApi);
   return response.data;
 });
 export const WeatherApiData = createAsyncThunk(
@@ -24,15 +24,18 @@ export const WeatherApiData = createAsyncThunk(
 );
 
 interface UsersState {
-  entities: CityResponse[];
-  data: Coordinates[];
+  city: CityResponse;
+  weather: WeatherData[];
   loading: "idle" | "pending" | "succeeded" | "failed";
   error: "error";
 }
 
 const initialState = {
-  entities: [],
-  data: [],
+  city: {
+    total_count: 0,
+    results: [],
+  },
+  weather: [],
   loading: "idle",
   error: "error",
 } satisfies UsersState as UsersState;
@@ -45,22 +48,18 @@ const GeonameApiSlice = createSlice({
   name: "apiData",
   initialState,
   reducers: {
-    genameMapData: (state, action) => {
-      state.data = [action.payload];
+    cityData: (state, action) => {
+      state.city = action.payload;
     },
   },
   extraReducers: (builder) => {
     builder
-      // .addCase(GeonameApiData.fulfilled, (state, action) => {
-      //   state.loading = "succeeded";
-      //   state.entities = [action.payload];
-      // })
       .addCase(WeatherApiData.pending, (state) => {
         state.loading = "idle";
       })
       .addCase(WeatherApiData.fulfilled, (state, action) => {
         state.loading = "succeeded";
-        state.entities = [action.payload];
+        state.weather = action.payload;
       })
       .addCase(WeatherApiData.rejected, (state) => {
         state.loading = "failed";
@@ -68,5 +67,5 @@ const GeonameApiSlice = createSlice({
   },
 });
 
-export const { genameMapData } = GeonameApiSlice.actions;
+export const { cityData } = GeonameApiSlice.actions;
 export default GeonameApiSlice.reducer;

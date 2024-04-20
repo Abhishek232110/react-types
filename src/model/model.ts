@@ -29,3 +29,49 @@ export interface Coordinates {
   lon: number;
   lat: number;
 }
+
+export interface WeatherData {
+  data: string;
+  base: String;
+  cod: number;
+  dt: number;
+  name: String;
+  timezone: number;
+  visibility: number;
+  says?: Says;
+  main: Main[];
+  weather?: Weather[];
+  wind: Wind;
+}
+
+export interface Says {
+  country: String;
+  id: number;
+  sunrise: number;
+  sunset: number;
+  type: number;
+}
+
+export interface Main {
+  feels_like: number;
+  grnd_level: number;
+  humidity: number;
+  pressure: number;
+  sea_level: number;
+  temp: number;
+  temp_max: number;
+  temp_min: number;
+}
+
+export interface Weather {
+  description: String;
+  main: number;
+  icon: string;
+  id: number;
+}
+
+export interface Wind {
+  deg: number;
+  guest: number;
+  speed: number;
+}
